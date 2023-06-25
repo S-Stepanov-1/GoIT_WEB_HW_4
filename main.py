@@ -34,6 +34,19 @@ class MyHTTPHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def _render_html(self, filename, status=200):
+        """
+            Render and serve an HTML file as the response.
+
+            Args:
+                filename (str): Path to the HTML file to be served.
+                status (int, optional): HTTP status code to be sent in the response. Defaults to 200.
+
+            Returns:
+                None
+
+            Sends an HTTP response with the specified status code and serves the contents of the HTML file as the response body.
+            The Content-type header is set to 'text/html'.
+        """
         self.send_response(status)
         self.send_header("Content-type", "text/html")
         self.end_headers()
@@ -41,6 +54,15 @@ class MyHTTPHandler(BaseHTTPRequestHandler):
             self.wfile.write(file.read())
 
     def _render_static(self):
+        """
+            Serve a static file as the response.
+
+            Returns:
+                None
+
+            Sends a 200 OK response and serves the contents of a static file specified by `self.path`.
+            The Content-type header is set based on the file's MIME type.
+        """
         self.send_response(200)
 
         mimetype = mimetypes.guess_type(self.path)
@@ -62,6 +84,22 @@ def send_data_to_socket_server(data_bytes):
 
 
 def handle_json_file(data_dict):
+    """
+    Handle JSON file by updating its contents with new data.
+
+    Args:
+        data_dict (dict): Data to be stored in the JSON file.
+    Returns:
+        None
+
+    Reads the JSON file at "storage/data.json" and loads its contents.
+    Adds a new key-value pair to the loaded data with the current timestamp as the key and data_dict as the value.
+    Writes the updated data back to the JSON file.
+
+    Example:
+        data = {"name": "John", "age": 25}
+        handle_json_file(data)
+    """
     try:
         with open("storage/data.json", "r", encoding="utf-8") as json_file:
             try:
@@ -79,6 +117,7 @@ def handle_json_file(data_dict):
 
 
 def run_server_socket():
+    """The function runs socket server"""
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_socket.bind(SOCKET_SERVER)
 
@@ -97,6 +136,7 @@ def run_server_socket():
 
 
 def run_http_server():
+    """The function runs http server"""
     http = HTTPServer(("", 3000), MyHTTPHandler)
     try:
         http.serve_forever()
